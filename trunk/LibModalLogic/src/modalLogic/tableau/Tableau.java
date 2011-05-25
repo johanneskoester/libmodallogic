@@ -471,8 +471,8 @@ public class Tableau<P> {
    *
    * @param lfs the subformulas
    */
-  public void removeFromExpandedDisjunctions(Collection<LabelledFormula<P>> fs) {
-    expandedDisjunctions.removeAll(fs);
+  public void removeFromExpandedDisjunctions(Collection<LabelledFormula<P>> lfs) {
+    expandedDisjunctions.removeAll(lfs);
   }
 
   /**
