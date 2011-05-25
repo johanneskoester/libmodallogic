@@ -24,7 +24,8 @@ public class WorldRelation<P> extends HashSet<Pair<World<P>>> {
 
   /**
    * Returns the map between labelled formulas and resulting relations.
-   * @return
+   *
+   * @return the map
    */
   public MultiMap<LabelledFormula<P>, Pair<World<P>>> getResulting() {
     return resulting;
