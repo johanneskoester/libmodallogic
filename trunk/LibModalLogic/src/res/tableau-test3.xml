@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mlml>
+  <conjunction>
+        <proposition>
+          <identifier>A</identifier>
+        </proposition>
+        <proposition>
+          <identifier>A</identifier>
+        </proposition>
+    <negation>
+      <proposition>
+        <identifier>B</identifier>
+      </proposition>
+    </negation>
+  </conjunction>
+</mlml>

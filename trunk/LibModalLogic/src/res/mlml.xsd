@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="mlml" type="unaryOperator" />
+  <xsd:complexType name="naryOperator">
+    <xsd:sequence>
+      <xsd:choice minOccurs="2" maxOccurs="unbounded">
+        <xsd:element ref="negation" />
+        <xsd:element ref="conjunction" />
+        <xsd:element ref="disjunction" />
+        <xsd:element ref="necessity" />
+        <xsd:element ref="proposition" />
+      </xsd:choice>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="unaryOperator">
+    <xsd:choice>
+      <xsd:element ref="negation" />
+      <xsd:element ref="conjunction" />
+      <xsd:element ref="disjunction" />
+      <xsd:element ref="necessity" />
+      <xsd:element ref="proposition" />
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:element name="negation" type="unaryOperator" />
+
+  <xsd:element name="conjunction" type="naryOperator" />
+  
+  <xsd:element name="disjunction" type="naryOperator" />
+  
+  <xsd:element name="necessity" type="unaryOperator" />
+
+  <xsd:element name="possibility">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="unaryOperator">
+          <xsd:attribute name="probability" type="xsd:float"/>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="proposition">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="identifier" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
