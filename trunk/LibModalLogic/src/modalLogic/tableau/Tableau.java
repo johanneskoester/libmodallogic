@@ -92,8 +92,18 @@ public class Tableau<P> {
    * @param w the world
    * @param f the subformula
    */
-  public void addBlock(World w, Formula<P> f) {
+  public void block(World w, Formula<P> f) {
     preBlocked.addBlock(w, f);
+  }
+
+  /**
+   * Undo blocking of a formula prior to execution of tableau.
+   *
+   * @param w the world
+   * @param f the subformula
+   */
+  public void unblock(World w, Formula<P> f) {
+    preBlocked.removeBlock(w, f);
   }
 
   /**
