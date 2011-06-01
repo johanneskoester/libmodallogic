@@ -30,6 +30,16 @@ public class PreBlocked<P> {
   }
 
   /**
+   * Remove a formula from being blocked.
+   *
+   * @param w the world
+   * @param f the subformula
+   */
+  public void removeBlock(World w, Formula<P> f) {
+    map.remove(w, f);
+  }
+
+  /**
    * Return true if a subformula was defined to be blocked.
    *
    * @param w the world
