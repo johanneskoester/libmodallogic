@@ -44,9 +44,16 @@ public class Tableau<P> {
 
   /**
    * Constructor of class Tableau.
+   */
+  public Tableau() {
+    this(new KRules<P>(), new EqualsComparator<P>(), true);
+  }
+
+  /**
+   * Constructor of class Tableau.
    *
    * @param rules the expansion rules
-   * @param lazy whether the tableau should be lazy
+   * @param lazy whether the tableau should be lazy (faster dynamic backtracking)
    */
   public Tableau(Rules<P> rules, boolean lazy) {
     this(rules, new EqualsComparator<P>(), lazy);
@@ -57,7 +64,7 @@ public class Tableau<P> {
    *
    * @param rules the expansion rules
    * @param propositionComparator a proposition comparator
-   * @param lazy whether the tableau should be lazy
+   * @param lazy whether the tableau should be lazy (faster dynamic backtracking)
    */
   public Tableau(Rules<P> rules, Comparator<P> propositionComparator, boolean lazy) {
     this.rules = rules;
