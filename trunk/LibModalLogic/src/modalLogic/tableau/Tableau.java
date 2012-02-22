@@ -254,7 +254,6 @@ public class Tableau<P> {
             break;
           case Formula.POSSIBILITY:
             rules.diamond(unexpanded, this);
-            System.out.println(++count);
             break;
           case Formula.NECESSITY:
             rules.box(unexpanded, this);
@@ -454,7 +453,6 @@ public class Tableau<P> {
   public boolean hasUnknownDisjunct(LabelledFormula<P> lf) {
     for(Formula<P> f1 : lf.getFormula()) {
       if(isUnknown(lf.getWorld(), f1)) {
-          System.out.println(f1);
         return true;
       }
     }
