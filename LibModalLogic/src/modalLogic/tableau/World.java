@@ -4,17 +4,13 @@
  * This software is open-source under the BSD license; see "license.txt"
  * for a description.
  */
-
 package modalLogic.tableau;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import modalLogic.formula.Formula;
 import modalLogic.tableau.clashes.ConcreteClashes;
+import org.apache.commons.collections15.MultiMap;
+import org.apache.commons.collections15.multimap.MultiHashMap;
 import util.Pair;
 
 /**
@@ -22,10 +18,11 @@ import util.Pair;
  *
  * @author Johannes Köster <johannes.koester@tu-dortmund.de>
  */
-public class World<P>{
+public class World<P> {
+
   private int id;
-  private Set<LabelledFormula<P>> positive = new HashSet<LabelledFormula<P>>();
-  private Set<LabelledFormula<P>> negative = new HashSet<LabelledFormula<P>>();
+  private MultiMap<P, LabelledFormula<P>> positive = new MultiHashMap<P, LabelledFormula<P>>();
+  private MultiMap<P, LabelledFormula<P>> negative = new MultiHashMap<P, LabelledFormula<P>>();
   private ConcreteClashes<P> clashes = new ConcreteClashes<P>();
   private Comparator<P> propositionComparator;
   private LabelledFormula<P> reason;
@@ -61,7 +58,8 @@ public class World<P>{
   }
 
   /**
-   * Returns the subformula the expansion of which caused this world to be created.
+   * Returns the subformula the expansion of which caused this world to be
+   * created.
    *
    * @return the causing subformula
    */
@@ -94,7 +92,7 @@ public class World<P>{
    * @return the positive literals of this world
    */
   public Collection<LabelledFormula<P>> getPositiveLiterals() {
-    return positive;
+    return positive.values();
   }
 
   /**
@@ -103,7 +101,7 @@ public class World<P>{
    * @return the negated literals of this world
    */
   public Collection<LabelledFormula<P>> getNegativeLiterals() {
-    return negative;
+    return negative.values();
   }
 
   /**
@@ -112,12 +110,11 @@ public class World<P>{
    * @param literal the literal
    */
   public void addLiteral(LabelledFormula<P> literal) {
-    if(literal.getFormula().isNegation()) {
-      negative.add(literal);
+    if (literal.getFormula().isNegation()) {
+      negative.put(literal.getFormula().getProposition(), literal);
       addClashes(literal, positive); // search in positive literals for clash
-    }
-    else {
-      positive.add(literal);
+    } else {
+      positive.put(literal.getFormula().getProposition(), literal);
       addClashes(literal, negative);
     }
   }
@@ -128,8 +125,10 @@ public class World<P>{
    * @param literal the literal
    */
   public void removeLiteral(LabelledFormula<P> literal) {
-    if(!positive.remove(literal))
-      negative.remove(literal);
+    P p = literal.getFormula().getProposition();
+    if (positive.remove(p) == null) {
+      negative.remove(p);
+    }
     removeClashes(literal);
   }
 
@@ -139,8 +138,9 @@ public class World<P>{
    * @return the clashes
    */
   public Iterator<Pair<LabelledFormula<P>>> clashes() {
-    if(clashes.isEmpty())
+    if (clashes.isEmpty()) {
       return null;
+    }
     return clashes.iterator();
   }
 
@@ -159,10 +159,11 @@ public class World<P>{
    * @param literal the literal
    * @param literals the other literals
    */
-  private void addClashes(LabelledFormula<P> literal, Collection<LabelledFormula<P>> literals) {
-    for(LabelledFormula<P> lf2 : literals) {
-      if(propositionComparator.compare(literal.getFormula().getProposition(), lf2.getFormula().getProposition()) == 0) {
-        clashes.add(literal,lf2);
+  private void addClashes(LabelledFormula<P> literal, MultiMap<P, LabelledFormula<P>> literals) {
+    Collection<LabelledFormula<P>> clashing = literals.get(literal.getFormula().getProposition());
+    if (clashing != null) {
+      for (LabelledFormula<P> c : clashing) {
+        clashes.add(literal, c);
       }
     }
   }
@@ -174,12 +175,13 @@ public class World<P>{
    */
   private void removeClashes(LabelledFormula<P> literal) {
     Iterator<Pair<LabelledFormula<P>>> clash = clashes.iterator();
-    while(clash.hasNext()) {
-      if(clash.next().contains(literal))
+    while (clash.hasNext()) {
+      if (clash.next().contains(literal)) {
         clash.remove();
+      }
     }
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj == null) {

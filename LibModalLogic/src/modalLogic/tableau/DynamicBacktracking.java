@@ -4,7 +4,6 @@
  * This software is open-source under the BSD license; see "license.txt"
  * for a description.
  */
-
 package modalLogic.tableau;
 
 import java.util.ArrayList;
@@ -18,10 +17,11 @@ import util.Pair;
 
 /**
  * Performs dynamic backtracking when clash occurs on current branch.
- * 
+ *
  * @author Johannes Köster <johannes.koester@tu-dortmund.de>
  */
 public class DynamicBacktracking<P> {
+
   private Tableau<P> tableau;
 
   /**
@@ -35,41 +35,42 @@ public class DynamicBacktracking<P> {
 
   /**
    * Find the disjunction were backtracking takes place.
-   * 
+   *
    * @param clashes clashing pairs of subformulas
    * @return the selected disjunction to backtrack
    */
   public LabelledFormula<P> findBacktrackingPoint(Iterator<Pair<LabelledFormula<P>>> clashes) {
     Set<Formula<P>> tempDisj = new HashSet<Formula<P>>();
-    while(clashes.hasNext()) {
-      for(LabelledFormula<P> f : clashes.next()) {
+    while (clashes.hasNext()) {
+      for (LabelledFormula<P> f : clashes.next()) {
         tempDisj.addAll(tableau.getParentDisj(f.getFormula()));
       }
     }
 
     Iterator<LabelledFormula<P>> disj = new DescendingIterator<LabelledFormula<P>>(tableau.getDisjunctions());
-    while(disj.hasNext()) {
+    while (disj.hasNext()) {
       LabelledFormula<P> lf = disj.next();
       Formula<P> f = lf.getFormula();
-      if(tempDisj.contains(f)) {
-        if(tableau.hasUnknownDisjunct(lf)) { // suspicious
+      if (tempDisj.contains(f)) {
+        if (tableau.hasUnknownDisjunct(lf)) { // suspicious
           LabelledFormula<P> activeDisjunct = tableau.getActiveDisjunct(lf);
           tempDisj.remove(f);
           activeDisjunct.setEliminationExplanation(tempDisj);
           return lf;
         }
 
-        for(Formula<P> f1 : f) {
+        for (Formula<P> f1 : f) {
           tempDisj.addAll(tableau.getLabelledFormula(lf.getWorld(), f1).getEliminationExplanation());
         }
 
         tempDisj.addAll(tableau.getParentDisj(f));
-        
+
         World w = lf.getWorld();
         LabelledFormula<P> reason = w.getReason();
-        if(reason != null)
+        if (reason != null) {
           tempDisj.addAll(tableau.getParentDisj(reason.getFormula()));
-        
+        }
+
         tempDisj.remove(lf.getFormula());
       }
     }
@@ -88,14 +89,13 @@ public class DynamicBacktracking<P> {
 
     lclashed.setState(FormulaState.BLOCKED);
 
-    for(LabelledFormula<P> lf1 : tableau.getExplanationContains(ldisjunction.getFormula())) {
-      if(tableau.isLazy()) {
+    for (LabelledFormula<P> lf1 : tableau.getExplanationContains(ldisjunction.getFormula())) {
+      if (tableau.isLazy()) {
         LabelledFormula<P> par = tableau.getLabelledFormula(lf1.getWorld(), lf1.getFormula().getParent());
         undoFormula(lf1);
         lf1.setState(FormulaState.UNKNOWN);
         nextDisjunct(par);
-      }
-      else {
+      } else {
         lf1.setState(FormulaState.UNKNOWN);
         lf1.getEliminationExplanation().clear();
       }
@@ -114,13 +114,17 @@ public class DynamicBacktracking<P> {
     // use selection heuristic to choose disjunct
     Formula<P> disjunct = tableau.getDisjunctSelector().selectNotBlockedDisjunct(ldisjunction, tableau.getHeuristics().disjunctSelector(ldisjunction));
 
-    LabelledFormula<P> ldisjunct = tableau.label(ldisjunction.getWorld(), disjunct);
+    LabelledFormula<P> ldisjunct = tableau.getLabelledFormula(ldisjunction.getWorld(), disjunct);
+    if (ldisjunct == null) {
+      ldisjunct = tableau.label(ldisjunction.getWorld(), disjunct);
+    }
     ldisjunct.setState(FormulaState.ACTIVE);
     tableau.addToBranch(ldisjunct, ldisjunction);
   }
 
   /**
-   * Helper method to remove a subformula and its resulting expansions from branch.
+   * Helper method to remove a subformula and its resulting expansions from
+   * branch.
    *
    * @param lf the subformula
    */
@@ -138,8 +142,8 @@ public class DynamicBacktracking<P> {
     tableau.removeWorldsCausedBy(lf);
     tableau.removeRelationsCausedBy(lf);
 
-    for(LabelledFormula<P> lf2 : fs) {
-      ((ArrayList<LabelledFormula<P>>)lf2.getFormula().getPayload()).remove(lf2);
+    for (LabelledFormula<P> lf2 : fs) {
+      ((ArrayList<LabelledFormula<P>>) lf2.getFormula().getPayload()).remove(lf2);
     }
   }
 }

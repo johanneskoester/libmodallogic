@@ -414,7 +414,7 @@ public class Tableau<P> {
       return false;
     LabelledFormula<P> lf = getLabelledFormula(w, f);
     if(lf!=null) {
-      return lf.getState() == FormulaState.UNKNOWN;
+      return lf.getState().equals(FormulaState.UNKNOWN);
     }
     return true;
   }
@@ -453,8 +453,10 @@ public class Tableau<P> {
    */
   public boolean hasUnknownDisjunct(LabelledFormula<P> lf) {
     for(Formula<P> f1 : lf.getFormula()) {
-      if(isUnknown(lf.getWorld(), f1))
+      if(isUnknown(lf.getWorld(), f1)) {
+          System.out.println(f1);
         return true;
+      }
     }
     return false;
   }

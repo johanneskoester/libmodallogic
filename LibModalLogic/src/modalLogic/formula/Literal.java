@@ -169,4 +169,30 @@ public class Literal<T> extends FormulaImpl<T> implements Cloneable {
     return clone;
   }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Literal<T> other = (Literal<T>) obj;
+        if(this.negation != other.negation)
+            return false;
+        if (this.proposition != other.proposition && (this.proposition == null || !this.proposition.equals(other.proposition))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.proposition != null ? this.proposition.hashCode() : 0);
+        if(this.negation)
+            hash = -hash;
+        return hash;
+    }
+
 }
