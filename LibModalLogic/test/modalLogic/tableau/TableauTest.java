@@ -56,8 +56,8 @@ public class TableauTest {
 
         FormulaFactory<String> wumpus1factory = new FormulaFactory<String>();
         wumpus1factory.openDisjunction();
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
                 wumpus1factory.literal("Wumpusx" + i + "y" + j);
             }
         }
@@ -65,10 +65,10 @@ public class TableauTest {
         Formula<String> Wumpus1 = wumpus1factory.create();
 
         Collection<Formula<String>> fs = new ArrayList<Formula<String>>();
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                for (int k = 0; k < 2; k++) {
-                    for (int l = 0; l < 2; l++) {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                for (int k = 0; k < 5; k++) {
+                    for (int l = 0; l < 5; l++) {
                         if (!(i == k && j == l)) {
                             FormulaFactory<String> wumpus2factory = new FormulaFactory<String>();
                             wumpus2factory.negation();

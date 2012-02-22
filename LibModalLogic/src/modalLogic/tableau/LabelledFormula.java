@@ -37,7 +37,6 @@ public class LabelledFormula<P> {
     this.world = world;
     expanded = f.getType() == Formula.LITERAL;
     ((Collection)f.getPayload()).add(this);
-    System.out.println(((Collection)f.getPayload()));
   }
 
   /**
