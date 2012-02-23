@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import modalLogic.formula.Formula;
+import modalLogic.formula.Literal;
 import org.apache.commons.collections15.iterators.IteratorChain;
 import util.Pair;
 
@@ -108,7 +109,8 @@ public class Branch<P> {
    */
   public void remove(LabelledFormula<P> lf) {
     unexpanded.remove(lf);
-    lf.getWorld().removeLiteral(lf);
+    if(lf.getFormula() instanceof Literal)
+      lf.getWorld().removeLiteral(lf);
   }
 
   /**
