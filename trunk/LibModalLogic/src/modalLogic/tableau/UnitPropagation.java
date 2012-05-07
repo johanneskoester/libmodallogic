@@ -11,9 +11,10 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import modalLogic.formula.Formula;
+import modalLogic.formula.Literal;
 
 /**
- * Implementation of unit propagation to predict the best expansion due to 
+ * Implementation of unit propagation to predict the best expansion due to
  * current branch.
  *
  * @author Johannes Köster <johannes.koester@tu-dortmund.de>
@@ -39,7 +40,7 @@ public class UnitPropagation<P> {
    */
   public Iterator<Formula<P>> selectDisjunct(LabelledFormula<P> disjunction) {
     Collection<Formula<P>> disjuncts = new ArrayList<Formula<P>>();
-    for(Formula<P> d : disjunction.getFormula()) {
+    for (Formula<P> d : disjunction.getFormula()) {
       disjuncts.add(d);
     }
 
@@ -58,14 +59,20 @@ public class UnitPropagation<P> {
    * @param disjuncts disjunct to select from
    */
   private void removeClashing(boolean positive, Iterable<LabelledFormula<P>> literals, Iterable<Formula<P>> disjuncts) {
-    for(LabelledFormula<P> l : literals) {
+    for (LabelledFormula<P> l : literals) {
       Iterator<Formula<P>> ite = disjuncts.iterator();
-      while(ite.hasNext()) {
+      while (ite.hasNext()) {
         Formula<P> d = ite.next();
-        if(d.getType() == Formula.LITERAL && propositionComparator.compare(l.getFormula().getProposition(), d.getProposition()) == 0)
-          if(d.isNegation() == positive) {
+
+        if (d.isNegation() == positive) {
+          if (d.getType() == Formula.LITERAL
+                  && l.getFormula().getType() == Formula.LITERAL
+                  && propositionComparator.compare(l.getFormula().getProposition(), d.getProposition()) == 0) {
+            ite.remove();
+          } else if (d.getType() == Formula.CONSTANT && l.getFormula().getType() == Formula.CONSTANT) {
             ite.remove();
           }
+        }
       }
     }
   }

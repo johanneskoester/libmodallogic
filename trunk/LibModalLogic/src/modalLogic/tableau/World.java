@@ -7,6 +7,7 @@
 package modalLogic.tableau;
 
 import java.util.*;
+import modalLogic.formula.Constant;
 import modalLogic.formula.Formula;
 import modalLogic.tableau.clashes.ConcreteClashes;
 import org.apache.commons.collections15.MultiMap;
@@ -23,6 +24,8 @@ public class World<P> {
   private int id;
   private MultiMap<P, LabelledFormula<P>> positive = new MultiHashMap<P, LabelledFormula<P>>();
   private MultiMap<P, LabelledFormula<P>> negative = new MultiHashMap<P, LabelledFormula<P>>();
+  private MultiMap<Constant, LabelledFormula<P>> posconstants = new MultiHashMap<Constant, LabelledFormula<P>>();
+  private MultiMap<Constant, LabelledFormula<P>> negconstants = new MultiHashMap<Constant, LabelledFormula<P>>();
   private ConcreteClashes<P> clashes = new ConcreteClashes<P>();
   private Comparator<P> propositionComparator;
   private LabelledFormula<P> reason;
@@ -92,7 +95,9 @@ public class World<P> {
    * @return the positive literals of this world
    */
   public Collection<LabelledFormula<P>> getPositiveLiterals() {
-    return positive.values();
+    Collection<LabelledFormula<P>> pos = positive.values();
+    pos.addAll(posconstants.values());
+    return pos;
   }
 
   /**
@@ -101,7 +106,9 @@ public class World<P> {
    * @return the negated literals of this world
    */
   public Collection<LabelledFormula<P>> getNegativeLiterals() {
-    return negative.values();
+    Collection<LabelledFormula<P>> neg = negative.values();
+    neg.addAll(negconstants.values());
+    return neg;
   }
 
   /**
@@ -110,12 +117,22 @@ public class World<P> {
    * @param literal the literal
    */
   public void addLiteral(LabelledFormula<P> literal) {
-    if (literal.getFormula().isNegation()) {
-      negative.put(literal.getFormula().getProposition(), literal);
-      addClashes(literal, positive); // search in positive literals for clash
+    if (literal.getFormula().getType() == Formula.CONSTANT) {
+      if (literal.getFormula().isNegation()) {
+        negconstants.put((Constant) literal.getFormula(), literal);
+        addClashes(literal, positive, posconstants); // search in positive literals for clash
+      } else {
+        posconstants.put((Constant) literal.getFormula(), literal);
+        addClashes(literal, negative, negconstants);
+      }
     } else {
-      positive.put(literal.getFormula().getProposition(), literal);
-      addClashes(literal, negative);
+      if (literal.getFormula().isNegation()) {
+        negative.put(literal.getFormula().getProposition(), literal);
+        addClashes(literal, positive, posconstants); // search in positive literals for clash
+      } else {
+        positive.put(literal.getFormula().getProposition(), literal);
+        addClashes(literal, negative, negconstants);
+      }
     }
   }
 
@@ -159,9 +176,14 @@ public class World<P> {
    * @param literal the literal
    * @param literals the other literals
    */
-  private void addClashes(LabelledFormula<P> literal, MultiMap<P, LabelledFormula<P>> literals) {
+  private void addClashes(LabelledFormula<P> literal, MultiMap<P, LabelledFormula<P>> literals, MultiMap<Constant, LabelledFormula<P>> constants) {
     Collection<LabelledFormula<P>> clashing = literals.get(literal.getFormula().getProposition());
-    if (clashing != null) {
+    if(clashing == null) {
+      clashing = new ArrayList<LabelledFormula<P>>();
+    }
+    clashing.addAll(constants.values());
+    
+    if (!clashing.isEmpty()) {
       for (LabelledFormula<P> c : clashing) {
         clashes.add(literal, c);
       }

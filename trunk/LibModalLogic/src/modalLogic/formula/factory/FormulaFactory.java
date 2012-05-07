@@ -7,6 +7,7 @@
 
 package modalLogic.formula.factory;
 
+import modalLogic.formula.Constant;
 import modalLogic.formula.Formula;
 import modalLogic.formula.FormulaImpl;
 import modalLogic.formula.Literal;
@@ -115,6 +116,20 @@ public class FormulaFactory<P> implements Factory<Formula<P>> {
     handleNegation(l);
     current.addChild(l);
 
+    if(currentIsUnary())
+      close();
+  }
+  
+  /**
+   * Inserts a constant (T or F).
+   *
+   * @param proposition the value
+   */
+  public void constant(boolean value) {
+    Constant c = new Constant(value);
+    handleNegation(c);
+    current.addChild(c);
+    
     if(currentIsUnary())
       close();
   }

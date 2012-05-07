@@ -25,6 +25,7 @@ public abstract class Formula<T> implements Iterable<Formula<T>>, Cloneable {
   public static final short LITERAL = 4;
   public static final short IMPLICATION = 5;
   public static final short UNDEFINED = 6;
+  public static final short CONSTANT = 7;
 
   /**
    * Sets the type of the Formula.

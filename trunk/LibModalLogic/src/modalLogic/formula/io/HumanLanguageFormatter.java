@@ -47,6 +47,10 @@ public class HumanLanguageFormatter<P> implements FormulaFormatter<P> {
       case Formula.POSSIBILITY:
         s = " it is possible, that " + transform(f.getChild());
         break;
+      case Formula.CONSTANT:
+        s = f.toString();
+        literal = true;
+        break;
     }
     if(!literal)
       s = "(" + s + ")";
