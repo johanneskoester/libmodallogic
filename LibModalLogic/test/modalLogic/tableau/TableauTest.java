@@ -34,6 +34,25 @@ public class TableauTest {
   @org.junit.After
   public void tearDown() throws Exception {
   }
+  
+  /**
+   * Test of proofSearch method, of class Tableau.
+   */
+  @org.junit.Test
+  public void testConstants() {
+    FormulaFactory<String> ff = new FormulaFactory<String>();
+    ff.openConjunction();
+    ff.constant(true);
+    ff.constant(false);
+    ff.close();
+    Formula<String> f = ff.create();
+    System.out.println(f);
+    
+    Tableau instance = new Tableau(new KRules(), false);
+    instance.setFormula(f);
+    assertEquals(false, instance.proofSearch());
+  }
+  
 
   /**
    * Test of proofSearch method, of class Tableau.
@@ -108,6 +127,7 @@ public class TableauTest {
     assertEquals(expResult, result);
   }
 
+  @org.junit.Test
   public void testProofSearch2() {
     System.out.println("proofSearch");
     FormulaFactory<String> testfactory = new FormulaFactory<String>();

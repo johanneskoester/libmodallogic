@@ -35,7 +35,7 @@ public class LabelledFormula<P> {
   public LabelledFormula(World world, Formula<P> f, Tableau<P> tableau) {
     this.formula = f;
     this.world = world;
-    expanded = f.getType() == Formula.LITERAL;
+    expanded = f.getType() == Formula.LITERAL || f.getType() == Formula.CONSTANT;
     ((Collection)f.getPayload()).add(this);
   }
 

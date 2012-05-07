@@ -9,6 +9,7 @@ package modalLogic.formula.io;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import modalLogic.formula.Constant;
 import modalLogic.formula.Formula;
 import modalLogic.formula.Literal;
 
@@ -26,6 +27,7 @@ public class MathMLWriter<E> implements FormulaWriter<E> {
   public static String OR = "or";
   public static String AND = "and";
   public static String CI = "ci";
+  public static String CN = "cn";
   private XMLStreamWriter xmlw;
 
   /**
@@ -50,7 +52,13 @@ public class MathMLWriter<E> implements FormulaWriter<E> {
       xmlw.writeEmptyElement(NOT);
     }
 
-    if (formula instanceof Literal) {
+    if(formula instanceof Constant) {
+      xmlw.writeStartElement(CI);
+      xmlw.writeAttribute("type", "constant");
+      xmlw.writeCData(formula.toString());
+      xmlw.writeEndElement();
+    }
+    else if (formula instanceof Literal) {
       xmlw.writeStartElement(CI);
       xmlw.writeCData(((Literal)formula).getProposition().toString());
       xmlw.writeEndElement();

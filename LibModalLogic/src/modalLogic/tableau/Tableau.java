@@ -260,6 +260,8 @@ public class Tableau<P> {
             break;
           case Formula.LITERAL:
             break;
+          case Formula.CONSTANT:
+            break;
           default:
             throw new UnsupportedOperationException("The found formula type is not accepted. Formula must be in negation normal form.");
         }
