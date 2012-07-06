@@ -4,7 +4,6 @@
  * This software is open-source under the BSD license; see "license.txt"
  * for a description.
  */
-
 package modalLogic.formula.io;
 
 import javax.xml.stream.XMLEventReader;
@@ -21,6 +20,7 @@ import modalLogic.formula.factory.FormulaFactory;
  * @author Johannes Köster <johannes.koester@tu-dortmund.de>
  */
 public class MathMLReader<E> implements FormulaReader<E> {
+
   private XMLEventReader xmlr;
   private PropositionMap<E> propositionMap;
 
@@ -45,37 +45,47 @@ public class MathMLReader<E> implements FormulaReader<E> {
   public Formula<E> read() throws XMLStreamException {
     FormulaFactory<E> formula = new FormulaFactory<E>();
 
-    while(xmlr.hasNext()) {
-      XMLEvent e = xmlr.nextEvent();
-      if(e.isStartElement()) {
-        StartElement s = e.asStartElement();
-        String tag = s.getName().getLocalPart();
+    boolean ignoreNextEnd = false;
 
-        if(tag.equals(MathMLWriter.AND)) {
-          formula.openConjunction();
-        }
-        else if(tag.equals(MathMLWriter.OR)) {
-          formula.openDisjunction();
-        }
-        else if(tag.equals(MathMLWriter.IMPLIES)) {
-          formula.openImplication();
-        }
-        else if(tag.equals(MathMLWriter.NOT)) {
-          formula.negation();
-        }
-        else if(tag.equals(MathMLWriter.CI)) {
-          formula.literal(propositionMap.get(xmlr.getElementText()));
+    try {
+      while (xmlr.hasNext()) {
+        XMLEvent e = xmlr.nextEvent();
+        if (e.isStartElement()) {
+          StartElement s = e.asStartElement();
+          String tag = s.getName().getLocalPart();
+
+          if (tag.equals(MathMLWriter.AND)) {
+            formula.openConjunction();
+          } else if (tag.equals(MathMLWriter.OR)) {
+            formula.openDisjunction();
+          } else if (tag.equals(MathMLWriter.IMPLIES)) {
+            formula.openImplication();
+          } else if (tag.equals(MathMLWriter.NOT)) {
+            formula.negation();
+            ignoreNextEnd = true;
+          } else if (tag.equals(MathMLWriter.CI)) {
+            formula.literal(propositionMap.get(xmlr.getElementText()));
+          }
+        } else if (e.isEndElement()) {
+
+          EndElement f = e.asEndElement();
+          String tag = f.getName().getLocalPart();
+          if (tag.equals(MathMLWriter.APPLY)) {
+            if (!ignoreNextEnd) {
+              formula.close();
+              if (formula.isRoot()) {
+                break; // stop in case of multiple apply tags as siblings of a parent tag that wasn't read here
+              }
+            } else {
+              ignoreNextEnd = false;
+            }
+          }
+
         }
       }
-      else if(e.isEndElement()) {
-        EndElement f = e.asEndElement();
-        String tag = f.getName().getLocalPart();
-        if(tag.equals(MathMLWriter.APPLY)) {
-          formula.close();
-          if(formula.isRoot())
-            break; // stop in case of multiple apply tags as siblings of a parent tag that wasn't read here
-        }
-      }
+    } catch (UnsupportedOperationException ex) {
+      System.out.println(formula.create().toString());
+      throw ex;
     }
 
     return formula.create();
@@ -88,6 +98,7 @@ public class MathMLReader<E> implements FormulaReader<E> {
    * @param <E> the type of proposition objects
    */
   public interface PropositionMap<E> {
+
     /**
      * Returns a Proposition Object of type E for a given String.
      *
