@@ -5,6 +5,8 @@
 package modalLogic.formula;
 
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -20,11 +22,14 @@ public class Constant extends Literal implements Cloneable {
   }
 
   @Override
-  public String toString() {
+  protected void buildString(StringBuilder s) {
     if(negation)
-      return "F";
-    return "T";
+      s.append('⊥');
+    else
+      s.append('⊤');
   }
+  
+  
   
   @Override
   public boolean isNegationOf(Formula f) {
@@ -49,6 +54,32 @@ public class Constant extends Literal implements Cloneable {
 
   @Override
   public void setProposition(Object proposition) {
-    new UnsupportedOperationException("Constants may not have a proposition.");
+    throw new UnsupportedOperationException("Constants may not have a proposition.");
   }
+
+  /**
+   * Returns null, the common pseudo proposition of all constants.
+   * 
+   * @return null
+   */
+  @Override
+  public Object getProposition() {
+    return null;
+  }
+
+  /**
+   * Returns an empty set.
+   * @return empty set
+   */
+  @Override
+  public Set getPropositions() {
+    return new HashSet();
+  }
+
+  @Override
+  public boolean contains(Object proposition) {
+    return false;
+  }
+  
+  
 }

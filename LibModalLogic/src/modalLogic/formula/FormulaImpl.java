@@ -112,50 +112,54 @@ public class FormulaImpl<T> extends Formula<T> {
 
   @Override
   public String toString() {
-    String s = "";
+    StringBuilder s = new StringBuilder();
+    buildString(s);
+    return s.toString();
+  }
+  
+  @Override
+  protected void buildString(StringBuilder s) {
+    if (negation) {
+      s.append('¬');
+    }
+    s.append('(');
     switch (type) {
       case FormulaImpl.CONJUNCTION:
-        s = naryOperatorToString("∧");
+        naryOperatorToString(s, '∧');
         break;
       case FormulaImpl.DISJUNCTION:
-        s = naryOperatorToString("∨");
+        naryOperatorToString(s, '∨');
         break;
       case FormulaImpl.IMPLICATION:
-        s = naryOperatorToString("⇒");
+        naryOperatorToString(s, '⇒');
         break;
       case FormulaImpl.NECESSITY:
-        s = "□" + getChild();
+        s.append('□');
+        getChild().buildString(s);
         break;
       case FormulaImpl.POSSIBILITY:
-        s = "◊" + getChild();
+        s.append('◊');
+        getChild().buildString(s);
         break;
     }
-    s = "(" + s + ")";
-
-    if (negation) {
-      s = "¬" + s;
-    }
-
-    return s;
+    s.append(')');
   }
-
+  
   /**
    * Helper method to return a string representation for a given n-ary operator.
    *
+   * @param s the StringBuilder instance to append to
    * @param operator the operator
-   * @return the string representation for an n-ary operator
    */
-  private String naryOperatorToString(String operator) {
-    String s = "";
+  private void naryOperatorToString(StringBuilder s, char operator) {
     Iterator<Formula<T>> child = iterator();
 
     while (child.hasNext()) {
-      s += child.next().toString();
+      child.next().buildString(s);
       if (child.hasNext()) {
-        s += operator;
+        s.append(operator);
       }
     }
-    return s;
   }
 
   @Override

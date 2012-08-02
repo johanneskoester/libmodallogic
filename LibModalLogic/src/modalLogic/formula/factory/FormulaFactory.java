@@ -67,7 +67,7 @@ public class FormulaFactory<P> implements Factory<Formula<P>> {
    * Opens formula with undefined type. Attention, type must be set
    * afterwards or formula will be invalid.
    */
-  public void openFormula() {
+  private void openFormula() {
     openFormula(Formula.CONJUNCTION);
   }
 
@@ -114,9 +114,9 @@ public class FormulaFactory<P> implements Factory<Formula<P>> {
   public void literal(P proposition) {
     Literal<P> l = new Literal<P>(proposition);
     handleNegation(l);
-    current.addChild(l);
+    addToCurrent(l);
 
-    if(currentIsUnary())
+    if(!isSingleton() && currentIsUnary())
       close();
   }
   
@@ -128,9 +128,9 @@ public class FormulaFactory<P> implements Factory<Formula<P>> {
   public void constant(boolean value) {
     Constant c = new Constant(value);
     handleNegation(c);
-    current.addChild(c);
+    addToCurrent(c);
     
-    if(currentIsUnary())
+    if(!isSingleton() && currentIsUnary())
       close();
   }
 
@@ -140,9 +140,9 @@ public class FormulaFactory<P> implements Factory<Formula<P>> {
    * @param formula the subformula
    */
   public void subformula(Formula<P> formula) {
-    current.addChild(formula);
+    addToCurrent(formula);
 
-    if(currentIsUnary())
+    if(!isSingleton() && currentIsUnary())
       close();
   }
 
@@ -157,6 +157,9 @@ public class FormulaFactory<P> implements Factory<Formula<P>> {
    * Closes the current subformula.
    */
   public void close() {
+    if(current == null) {
+      throw new UnsupportedOperationException("No formula was opened before.");
+    }
     current = current.getParent();
     while(current != null && currentIsUnary()) {
       current = current.getParent();
@@ -180,6 +183,10 @@ public class FormulaFactory<P> implements Factory<Formula<P>> {
   private boolean currentIsUnary() {
     return current.getType() == Formula.NECESSITY || current.getType() == Formula.POSSIBILITY;
   }
+  
+  private boolean isSingleton() {
+    return formula instanceof Literal || formula instanceof Constant;
+  }
 
   /**
    * Helper method to open a subformula of a given type.
@@ -190,13 +197,17 @@ public class FormulaFactory<P> implements Factory<Formula<P>> {
     Formula<P> f = new FormulaImpl<P>(type);
     handleNegation(f);
     
+    addToCurrent(f);
+    current = f;
+  }
+  
+  private void addToCurrent(Formula<P> f) {
     if(current != null) {
       current.addChild(f);
     }
     else {
       formula = f;
     }
-    current = f;
   }
 
   /**

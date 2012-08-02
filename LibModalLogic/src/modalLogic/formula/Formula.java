@@ -201,4 +201,9 @@ public abstract class Formula<T> implements Iterable<Formula<T>>, Cloneable {
    * @return a clone of the whole formula tree
    */
   public abstract Formula<T> cloneWithReference(Map<Formula<T>, Formula<T>> reference);
+  
+  /**
+   * Builds a string representation of the formula using a StringBuilder instance.
+   */
+  protected abstract void buildString(StringBuilder s);
 }
