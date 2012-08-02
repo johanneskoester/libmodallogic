@@ -36,7 +36,7 @@ public class TableauTest {
   }
   
   /**
-   * Test of proofSearch method, of class Tableau.
+   * Test of proofSearch method for constants.
    */
   @org.junit.Test
   public void testConstants() {
@@ -53,9 +53,29 @@ public class TableauTest {
     assertEquals(false, instance.proofSearch());
   }
   
+  /**
+   * Test the creation of singleton formulas.
+   */
+  @org.junit.Test
+  public void testSingletons() {
+    FormulaFactory<String> ff = new FormulaFactory<String>();
+    ff.constant(true);
+    Formula<String> f = ff.create();
+    System.out.println(f);
+    
+    try {
+      ff = new FormulaFactory<String>();
+      ff.literal("A");
+      ff.constant(false);
+      ff.create();
+    }
+    catch(UnsupportedOperationException e) {
+      // this is the expected behaviour since there is no operator between the two literals.
+    }
+  }
 
   /**
-   * Test of proofSearch method, of class Tableau.
+   * Test of proofSearch method of class Tableau.
    */
   @org.junit.Test
   public void testProofSearch() {

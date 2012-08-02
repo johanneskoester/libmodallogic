@@ -86,13 +86,10 @@ public class Literal<T> extends FormulaImpl<T> implements Cloneable {
   }
 
   @Override
-  public String toString() {
-    String s = proposition.toString();
-
+  protected void buildString(StringBuilder s) {
     if(isNegation())
-      s = "¬" + s;
-
-    return s;
+      s.append('¬');
+    s.append(proposition.toString());
   }
 
   @Override
@@ -146,6 +143,11 @@ public class Literal<T> extends FormulaImpl<T> implements Cloneable {
     };
   }
 
+  /**
+   * Returns 0 as a literal has no further children in the formula tree.
+   * 
+   * @return 0
+   */
   @Override
   public int getChildCount() {
     return 0;
