@@ -56,7 +56,13 @@ public class Constant extends Literal implements Cloneable {
   public void setProposition(Object proposition) {
     throw new UnsupportedOperationException("Constants may not have a proposition.");
   }
-
+  
+  @Override
+  public Literal clone() {
+    return new Constant(!negation);
+  }
+  
+  
   /**
    * Returns null, the common pseudo proposition of all constants.
    * 
@@ -80,6 +86,5 @@ public class Constant extends Literal implements Cloneable {
   public boolean contains(Object proposition) {
     return false;
   }
-  
   
 }
