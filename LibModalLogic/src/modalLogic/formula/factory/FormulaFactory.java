@@ -62,13 +62,17 @@ public class FormulaFactory<P> implements Factory<Formula<P>> {
   public void setCurrentType(short type) {
     current.setType(type);
   }
+  
+  public short getCurrentType() {
+    return current.getType();
+  }
 
   /**
    * Opens formula with undefined type. Attention, type must be set
    * afterwards or formula will be invalid.
    */
-  private void openFormula() {
-    openFormula(Formula.CONJUNCTION);
+  public void openFormula() {
+    openFormula((short)-1);
   }
 
   /**
@@ -173,6 +177,10 @@ public class FormulaFactory<P> implements Factory<Formula<P>> {
   @Override
   public Formula<P> create() {
     return formula;
+  }
+  
+  public boolean isUndefined() {
+    return current.getType() == -1;
   }
 
   /**

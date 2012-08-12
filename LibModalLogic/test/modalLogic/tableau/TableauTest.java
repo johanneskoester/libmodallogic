@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import modalLogic.formula.Formula;
 import modalLogic.formula.factory.FormulaFactory;
+import modalLogic.formula.io.StringPropositionMap;
+import modalLogic.formula.io.TextReader;
+import modalLogic.formula.io.TextWriter;
 import static org.junit.Assert.*;
 
 /**
@@ -34,7 +37,29 @@ public class TableauTest {
   @org.junit.After
   public void tearDown() throws Exception {
   }
-  
+
+  @org.junit.Test
+  public void testTextReader() throws Exception {
+
+    String test = "A AND B AND C";
+    Formula<String> f = new TextReader<String>(test, new StringPropositionMap()).read();
+    System.out.println(f);
+    assert f.getChildCount() == 3;
+
+    f = new TextReader<String>("A AND B pp C AND NOT ( C OR D )", new StringPropositionMap()).read();
+    System.out.println(f);
+    assert f.getChildCount() == 3;
+  }
+
+  @org.junit.Test
+  public void testTextWriter() throws Exception {
+    Formula<String> f = new TextReader<String>("A AND B pp C AND NOT ( C OR D )", new StringPropositionMap()).read();
+    StringBuilder s = new StringBuilder();
+    new TextWriter<String>(s).write(f);
+    System.out.println("Output:");
+    System.out.println(s);
+  }
+
   /**
    * Test of proofSearch method for constants.
    */
@@ -47,12 +72,12 @@ public class TableauTest {
     ff.close();
     Formula<String> f = ff.create();
     System.out.println(f);
-    
+
     Tableau instance = new Tableau(new KRules(), false);
     instance.setFormula(f);
     assertEquals(false, instance.proofSearch());
   }
-  
+
   /**
    * Test the creation of singleton formulas.
    */
@@ -62,14 +87,13 @@ public class TableauTest {
     ff.constant(true);
     Formula<String> f = ff.create();
     System.out.println(f);
-    
+
     try {
       ff = new FormulaFactory<String>();
       ff.literal("A");
       ff.constant(false);
       ff.create();
-    }
-    catch(UnsupportedOperationException e) {
+    } catch (UnsupportedOperationException e) {
       // this is the expected behaviour since there is no operator between the two literals.
     }
   }
