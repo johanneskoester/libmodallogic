@@ -11,7 +11,7 @@ import modalLogic.formula.factory.FormulaFactory;
 
 /**
  *
- * @author johannes
+ * @author Johannes Köster <johannes.koester@tu-dortmund.de>
  */
 public class TextReader<P> implements FormulaReader<P> {
 

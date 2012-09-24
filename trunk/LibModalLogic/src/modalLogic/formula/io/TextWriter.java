@@ -12,7 +12,7 @@ import modalLogic.formula.Literal;
 
 /**
  *
- * @author johannes
+ * @author Johannes Köster <johannes.koester@tu-dortmund.de>
  */
 public class TextWriter<P> implements FormulaWriter<P> {
   
