@@ -29,7 +29,7 @@ public class TextReader<P> implements FormulaReader<P> {
   }
 
   @Override
-  public Formula<P> read() throws Exception {
+  public Formula<P> read() throws InvalidFormulaException {
     FormulaFactory<P> formula = new FormulaFactory<P>();
     String proposition = "";
 
@@ -102,8 +102,5 @@ public class TextReader<P> implements FormulaReader<P> {
     } else if(formula.getCurrentType() != type) {
       throw new InvalidFormulaException();
     }
-  }
-
-  private static class InvalidFormulaException extends Exception {
   }
 }
