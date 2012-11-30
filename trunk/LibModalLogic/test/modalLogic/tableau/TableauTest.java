@@ -185,4 +185,35 @@ public class TableauTest {
     boolean result = tableau.proofSearch();
     assertEquals(true, result);
   }
+
+  @org.junit.Test
+  public void testGooglecodeExample() {
+    FormulaFactory<String> factory = new FormulaFactory<String>();
+
+    factory.openDisjunction();
+    factory.literal("A");
+
+    factory.literal("B");
+
+    factory.negation();
+    factory.literal("C");
+    factory.close();
+
+    Formula<String> formula = factory.create();
+
+    Tableau<String> tableau = new Tableau<String>();
+    tableau.setFormula(formula);
+    boolean satisfiable = tableau.proofSearch();
+    System.out.println(tableau.getWorlds().get(0).getPositiveLiterals());
+    assertEquals(true, satisfiable);
+    
+    World<String> world = tableau.getWorlds().get(0);
+    Formula<String> toBlock = formula.getChild(0);
+    tableau = new Tableau<String>();
+    tableau.setFormula(formula);
+    tableau.block(world, toBlock);
+    satisfiable = tableau.proofSearch();
+    System.out.println(tableau.getWorlds().get(0).getPositiveLiterals());
+    assertEquals(true, satisfiable);
+  }
 }
