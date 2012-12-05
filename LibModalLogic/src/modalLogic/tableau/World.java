@@ -143,9 +143,10 @@ public class World<P> {
    */
   public void removeLiteral(LabelledFormula<P> literal) {
     P p = literal.getFormula().getProposition();
-    if (positive.remove(p) == null) {
-      negative.remove(p);
-    }
+    if(literal.getFormula().isNegation())
+    	negative.remove(p);
+    else
+    	positive.remove(p);
     removeClashes(literal);
   }
 

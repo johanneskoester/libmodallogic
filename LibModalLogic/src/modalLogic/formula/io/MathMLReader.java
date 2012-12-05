@@ -62,9 +62,10 @@ public class MathMLReader<E> implements FormulaReader<E> {
             formula.openImplication();
           } else if (tag.equals(MathMLWriter.NOT)) {
             formula.negation();
-            ignoreNextEnd = true;
+            ignoreNextEnd = true; // TODO check if this is correct
           } else if (tag.equals(MathMLWriter.CI)) {
             formula.literal(propositionMap.get(xmlr.getElementText()));
+            ignoreNextEnd = false; // TODO check if this is correct
           }
         } else if (e.isEndElement()) {
 
