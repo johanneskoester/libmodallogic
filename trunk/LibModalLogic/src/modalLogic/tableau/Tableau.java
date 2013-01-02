@@ -41,6 +41,7 @@ public class Tableau<P> {
   private DisjunctSelector<P> disjunctSelector = new DisjunctSelector<P>(this);
   private boolean lazy;
   private PreBlocked<P> preBlocked = new PreBlocked<P>();
+  private boolean dot = false;
 
   /**
    * Constructor of class Tableau.
@@ -77,6 +78,11 @@ public class Tableau<P> {
     unitPropagation = new UnitPropagation<P>(propositionComparator);
   }
 
+  public Tableau(Rules<P> rules, Comparator<P> propositionComparator, boolean lazy, boolean dot) {
+	  this(rules, propositionComparator, lazy);
+	  this.dot = dot;
+  }
+  
   /**
    * Returns the unit propagation implementation.
    *
@@ -266,10 +272,18 @@ public class Tableau<P> {
             throw new UnsupportedOperationException("The found formula type is not accepted. Formula must be in negation normal form.");
         }
         setExpanded(unexpanded);
+        if(false) {
+          // TODO add dot output here
+          System.out.println(unexpanded);
+        }
       }
       else {
         LabelledFormula<P> f = dynBacktracking.findBacktrackingPoint(clashes);
         if(f == null) {
+          Iterator<Pair<LabelledFormula<P>>> cl = branch.clashes();
+          while(cl.hasNext()) {
+        	  System.out.println(cl.next());
+          }
           state = TableauState.UNSATISFIABLE;
           return false;
         }
