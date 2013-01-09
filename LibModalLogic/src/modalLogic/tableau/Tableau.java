@@ -272,7 +272,7 @@ public class Tableau<P> {
             throw new UnsupportedOperationException("The found formula type is not accepted. Formula must be in negation normal form.");
         }
         setExpanded(unexpanded);
-        if(false) {
+        if(dot) {
           // TODO add dot output here
           System.out.println(unexpanded);
         }

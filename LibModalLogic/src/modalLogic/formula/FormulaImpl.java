@@ -189,8 +189,24 @@ public class FormulaImpl<T> extends Formula<T> {
           break;
       }
     }
+    
     for (Formula<T> child : this) {
       child.toNegationNormalForm();
+    }
+    
+    // collapse unnecessary parentheses
+    if (type == DISJUNCTION || type == CONJUNCTION) {
+    	List<Formula<T>> oldchildren = new ArrayList<Formula<T>>(children);
+    	children.clear();
+    	for(Formula<T> child : oldchildren) {
+    		if(child.getType() == type) {
+    			for(Formula<T> c : child)
+    				addChild(c);
+    		}
+    		else {
+    			addChild(child);
+    		}
+    	}
     }
   }
 
