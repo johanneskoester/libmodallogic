@@ -40,9 +40,10 @@ public class MathMLReader<E> implements FormulaReader<E> {
    *
    * @return the read formula
    * @throws XMLStreamException can occur while reading.
+ * @throws InvalidFormulaException 
    */
   @Override
-  public Formula<E> read() throws XMLStreamException {
+  public Formula<E> read() throws XMLStreamException, InvalidFormulaException {
     FormulaFactory<E> formula = new FormulaFactory<E>();
 
     boolean ignoreNextEnd = false;
@@ -64,7 +65,11 @@ public class MathMLReader<E> implements FormulaReader<E> {
             formula.negation();
             ignoreNextEnd = true; // TODO check if this is correct
           } else if (tag.equals(MathMLWriter.CI)) {
-            formula.literal(propositionMap.get(xmlr.getElementText()));
+        	String name = xmlr.getElementText();
+        	E l = propositionMap.get(name);
+        	if(l == null)
+        		throw new InvalidFormulaException();
+            formula.literal(l);
             ignoreNextEnd = false; // TODO check if this is correct
           }
         } else if (e.isEndElement()) {

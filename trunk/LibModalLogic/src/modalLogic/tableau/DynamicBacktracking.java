@@ -60,7 +60,9 @@ public class DynamicBacktracking<P> {
         }
 
         for (Formula<P> f1 : f) {
-          tempDisj.addAll(tableau.getLabelledFormula(lf.getWorld(), f1).getEliminationExplanation());
+        	if(!tableau.isBlocked(lf.getWorld(), f1)) {
+        		tempDisj.addAll(tableau.getLabelledFormula(lf.getWorld(), f1).getEliminationExplanation());
+        	}
         }
 
         tempDisj.addAll(tableau.getParentDisj(f));
